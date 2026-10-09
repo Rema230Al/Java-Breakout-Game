@@ -25,7 +25,17 @@ public class Board extends JPanel {
     private Brick[] bricks;
     private boolean inGame = true;
 
-    public Board() {
+    // [BUILDER] Board no longer knows how a level is laid out. It receives a
+    // builder from outside (from Breakout) and asks it for a finished level.
+    private final LevelBuilder levelBuilder;
+
+    // [BUILDER] BEFORE: public Board() with no parameters.
+    // AFTER: the client passes in which layout to build.
+    public Board(LevelBuilder levelBuilder) {
+
+        // IMPORTANT: this must be set BEFORE initBoard(), because
+        // initBoard() -> gameInit() uses it immediately.
+        this.levelBuilder = levelBuilder;
 
         initBoard();
     }
@@ -41,21 +51,30 @@ public class Board extends JPanel {
 
     private void gameInit() {
 
-        bricks = new Brick[Commons.N_OF_BRICKS];
+        /*
+         * [BUILDER] BEFORE, this method built the level by hand:
+         *
+         *     bricks = new Brick[Commons.N_OF_BRICKS];
+         *     ball = new Ball();
+         *     paddle = new Paddle();
+         *     for (int i = 0; i < 5; i++)
+         *         for (int j = 0; j < 6; j++)
+         *             bricks[k++] = new Brick(j * 40 + 30, i * 10 + 50);
+         *
+         * AFTER: the Director runs the builder's steps in order, and we just
+         * collect the finished parts from the Level (the product).
+         *
+         * [ABSTRACT FACTORY] Board also no longer says "new Ball()" etc.
+         * The builder gets each object from a GameFactory, so Board doesn't
+         * know (or care) whether it got a Ball or a FastBall.
+         */
+        var director = new LevelDirector(levelBuilder);
+        director.makeLevel();
+        Level level = director.getLevel();
 
-        ball = new Ball();
-        paddle = new Paddle();
-
-        int k = 0;
-
-        for (int i = 0; i < 5; i++) {
-
-            for (int j = 0; j < 6; j++) {
-
-                bricks[k] = new Brick(j * 40 + 30, i * 10 + 50);
-                k++;
-            }
-        }
+        paddle = level.getPaddle();
+        ball = level.getBall();
+        bricks = level.getBricks();
 
         timer = new Timer(Commons.PERIOD, new GameCycle());
         timer.start();
@@ -91,7 +110,9 @@ public class Board extends JPanel {
         g2d.drawImage(paddle.getImage(), paddle.getX(), paddle.getY(),
                 paddle.getImageWidth(), paddle.getImageHeight(), this);
 
-        for (int i = 0; i < Commons.N_OF_BRICKS; i++) {
+        // [BUILDER] Was "i < Commons.N_OF_BRICKS". Now the level itself
+        // tells us how many bricks there are (30 classic, 20 pyramid).
+        for (int i = 0; i < bricks.length; i++) {
 
             if (!bricks[i].isDestroyed()) {
 
@@ -159,14 +180,16 @@ public class Board extends JPanel {
             stopGame();
         }
 
-        for (int i = 0, j = 0; i < Commons.N_OF_BRICKS; i++) {
+        // [BUILDER] Victory check: was "Commons.N_OF_BRICKS" in both places.
+        // With bricks.length, winning works for any layout size.
+        for (int i = 0, j = 0; i < bricks.length; i++) {
 
             if (bricks[i].isDestroyed()) {
 
                 j++;
             }
 
-            if (j == Commons.N_OF_BRICKS) {
+            if (j == bricks.length) {
 
                 message = "Victory";
                 stopGame();
@@ -214,7 +237,8 @@ public class Board extends JPanel {
             }
         }
 
-        for (int i = 0; i < Commons.N_OF_BRICKS; i++) {
+        // [BUILDER] Was "i < Commons.N_OF_BRICKS".
+        for (int i = 0; i < bricks.length; i++) {
 
             if ((ball.getRect()).intersects(bricks[i].getRect())) {
 
@@ -246,7 +270,10 @@ public class Board extends JPanel {
                         ball.setYDir(-1);
                     }
 
-                    bricks[i].setDestroyed(true);
+                    // [ABSTRACT FACTORY] Was "bricks[i].setDestroyed(true);"
+                    // Now the brick decides what a hit means: a normal Brick
+                    // breaks, a StrongBrick (Hard mode) needs a second hit.
+                    bricks[i].hit();
                 }
             }
         }

@@ -34,7 +34,22 @@ public class Brick extends Sprite {
     }
 
     void setDestroyed(boolean val) {
-        
+
         destroyed = val;
+    }
+
+    /*
+     * [ABSTRACT FACTORY] New method added in the refactor.
+     *
+     * Called by Board when the ball hits this brick. BEFORE, Board called
+     * setDestroyed(true) directly, which meant every brick always broke on
+     * the first hit. Now the brick itself decides what a hit does:
+     *   - a normal Brick breaks right away (this method),
+     *   - a StrongBrick overrides hit() and needs two hits.
+     * Board doesn't need to know which kind of brick it is (polymorphism).
+     */
+    void hit() {
+
+        setDestroyed(true);
     }
 }
