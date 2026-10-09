@@ -1,0 +1,11 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-22",
+            "path": "C:\\Program Files\\Java\\jdk-22",
+            "default": true
+        }
+    ]
+}
