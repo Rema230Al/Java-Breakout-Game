@@ -25,12 +25,13 @@ public class Board extends JPanel {
     private Brick[] bricks;
     private boolean inGame = true;
 
-    // [BUILDER] Board no longer knows how a level is laid out. It receives a
-    // builder from outside (from Breakout) and asks it for a finished level.
+    // [BUILDER] Board does not know how a level is laid out. It receives a
+    // builder from outside (from Breakout). The type is the interface, so
+    // Board works the same with the classic grid and with the pyramid.
     private final LevelBuilder levelBuilder;
 
     // [BUILDER] BEFORE: public Board() with no parameters.
-    // AFTER: the client passes in which layout to build.
+    // AFTER: whoever creates the Board passes in which layout to build.
     public Board(LevelBuilder levelBuilder) {
 
         // IMPORTANT: this must be set BEFORE initBoard(), because
@@ -52,7 +53,16 @@ public class Board extends JPanel {
     private void gameInit() {
 
         /*
-         * [BUILDER] BEFORE, this method built the level by hand:
+         * [BUILDER]  Board is the CLIENT that uses the Director
+         *                                                    (slides 32, 37)
+         * WHAT HAPPENS HERE
+         *   The next three lines are the Client's lines on slide 37:
+         *       new RobotEngineer(oldStyle)  ->  new LevelDirector(levelBuilder)
+         *       robotEng.makeRobot()         ->  director.makeLevel()
+         *       robotEng.getRobot()          ->  director.getLevel()
+         *   After that, Board takes the three parts out of the Level.
+         *
+         * BEFORE THE REFACTOR this method built the level by hand:
          *
          *     bricks = new Brick[Commons.N_OF_BRICKS];
          *     ball = new Ball();
@@ -61,12 +71,12 @@ public class Board extends JPanel {
          *         for (int j = 0; j < 6; j++)
          *             bricks[k++] = new Brick(j * 40 + 30, i * 10 + 50);
          *
-         * AFTER: the Director runs the builder's steps in order, and we just
-         * collect the finished parts from the Level (the product).
-         *
-         * [ABSTRACT FACTORY] Board also no longer says "new Ball()" etc.
-         * The builder gets each object from a GameFactory, so Board doesn't
-         * know (or care) whether it got a Ball or a FastBall.
+         * WHY IT IS BETTER NOW
+         *   - Board's job is to run the game. It no longer also decides
+         *     how a level is laid out, so a new layout does not touch Board.
+         *   - [ABSTRACT FACTORY] Board no longer writes "new Ball()". It
+         *     gets a Ball from the level and does not know, or need to
+         *     know, whether it is really a FastBall.
          */
         var director = new LevelDirector(levelBuilder);
         director.makeLevel();

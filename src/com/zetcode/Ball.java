@@ -2,6 +2,27 @@ package com.zetcode;
 
 import javax.swing.ImageIcon;
 
+/*
+ * [ABSTRACT FACTORY]  Role: PRODUCT, the ball                  (slides 42, 59)
+ *
+ * WHAT THIS IS
+ *   The normal ball. In the pattern it does two jobs:
+ *   1. It is the Classic family's ball, the one ClassicFactory creates.
+ *   2. It is the TYPE the rest of the game uses for any ball. HardFactory
+ *      creates a FastBall but hands it out as a Ball.
+ *
+ * IN THE SLIDES
+ *   - Slide 59 draws a separate AbstractProduct with two subclasses next to
+ *     each other (ProductB1, ProductB2).
+ *   - Slide 42 says products have a "common ancestor, same apparent type,
+ *     different actual type". Ball is that common, apparent type.
+ *
+ * HOW WE DID IT HERE, AND WHY
+ *   We did not add a separate abstract ball above this class. The original
+ *   Ball already has everything a ball needs, so the Hard version only has
+ *   to extend it and change move(). This way the code of this original
+ *   class did not change at all; only this comment was added.
+ */
 public class Ball extends Sprite {
 
     private int xdir;

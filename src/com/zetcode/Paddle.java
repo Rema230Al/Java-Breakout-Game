@@ -3,6 +3,24 @@ package com.zetcode;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
+/*
+ * [ABSTRACT FACTORY]  Role: PRODUCT, the paddle                (slides 42, 59)
+ *
+ * WHAT THIS IS
+ *   The normal paddle. Like Ball, it does two jobs in the pattern:
+ *   1. It is the Classic family's paddle, the one ClassicFactory creates.
+ *   2. It is the TYPE the rest of the game uses for any paddle. HardFactory
+ *      creates a FastPaddle but hands it out as a Paddle.
+ *
+ * IN THE SLIDES
+ *   The common, apparent type from slide 42, standing in for the
+ *   AbstractProduct box on slide 59. See the comment in Ball.java for why
+ *   we did not add a separate abstract class.
+ *
+ * HOW WE DID IT HERE, AND WHY
+ *   The code of this original class did not change; only this comment was
+ *   added.
+ */
 public class Paddle extends Sprite  {
 
     private int dx;

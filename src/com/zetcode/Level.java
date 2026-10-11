@@ -1,18 +1,35 @@
 package com.zetcode;
 
 /*
- * [BUILDER] Role: PRODUCT
+ * [BUILDER]  Role: PRODUCT                                     (slides 31, 33)
  *
- * A Level is the "complex object" that the Builder pattern constructs.
- * It is just a container for the three parts every level is made of:
- * one paddle, one ball and an array of bricks.
+ * WHAT THIS IS
+ *   A Level is the finished thing the Builder pattern produces. It is a
+ *   simple container for the three parts every level has: one paddle, one
+ *   ball and an array of bricks.
  *
- * BEFORE the refactor these three objects were created directly inside
- * Board.gameInit(). Now a LevelBuilder creates them and stores them here,
- * and Board simply reads them back with the getters.
+ * IN THE SLIDES
+ *   - The Product box on slide 31.
+ *   - Robot on slide 33: private fields, one setter and one getter per
+ *     part, and nothing else. Level has the same shape, with paddle, ball
+ *     and bricks in place of head, torso, arms and legs.
  *
- * The setters are package-private (no "public") on purpose: only classes in
- * com.zetcode (our builders) should fill a Level. Board only needs the getters.
+ * HOW WE DID IT HERE, AND WHY
+ *   - Before the refactor these three objects were created directly inside
+ *     Board.gameInit(). Now a LevelBuilder creates them and stores them
+ *     here, and Board reads them back with the getters.
+ *   - The builders are the only ones that call the setters. Board is the
+ *     only one that calls the getters.
+ *   - The methods have no "public" in front, where the slide's Robot uses
+ *     public. We followed the rest of this game (Ball.move(),
+ *     Brick.isDestroyed() and so on are written the same way). All our
+ *     classes are in one package, so it makes no difference to how the
+ *     code works.
+ *
+ * GOOD TO KNOW
+ *   The product has no logic. It does not know it was "built", and it does
+ *   not know about builders or factories. All the knowledge about how to
+ *   make a level is in the builders.
  */
 public class Level {
 

@@ -1,18 +1,31 @@
 package com.zetcode;
 
 /*
- * [ABSTRACT FACTORY] Role: CONCRETE PRODUCT (Hard family)
+ * [ABSTRACT FACTORY]  Role: CONCRETE PRODUCT, Hard family      (slides 42, 59)
  *
- * A brick that needs TWO hits to break.
+ * WHAT THIS IS
+ *   A brick that needs two hits to break. Only HardFactory creates it.
  *
- * Board calls brick.hit() whenever the ball touches a brick. A normal Brick
- * breaks immediately; this one only counts down the first time.
- * Board never checks "is this a StrongBrick?"; overriding hit() is enough.
- * That is polymorphism doing the work.
+ * IN THE SLIDES
+ *   A second-family product on slide 59, like FastBall and FastPaddle.
+ *   Apparent type Brick, actual type StrongBrick (slide 42).
  *
- * Known limitation (from the ORIGINAL collision code, not the pattern):
- * on some corner hits the original code does not bounce the ball, so the
- * ball can touch the same brick on the next tick and break it in one pass.
+ * HOW WE DID IT HERE, AND WHY
+ *   Board calls brick.hit() whenever the ball touches a brick. A normal
+ *   Brick breaks at once. This class overrides hit() to count down, and
+ *   only breaks when the count reaches 0.
+ *
+ *   The count lives here and not in Board, because how many hits a brick
+ *   needs is the brick's own business. Board never checks which kind of
+ *   brick it has.
+ *
+ * GOOD TO KNOW
+ *   - Board only calls hit() on bricks that are not destroyed yet, so
+ *     hitsLeft never goes below 0.
+ *   - Known limit, from the ORIGINAL collision code and not from the
+ *     pattern: on some corner hits Board does not turn the ball around, so
+ *     the ball touches the same brick again on the next tick and the brick
+ *     can break in one pass.
  */
 public class StrongBrick extends Brick {
 
