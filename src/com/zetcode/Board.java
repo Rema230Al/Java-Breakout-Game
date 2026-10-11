@@ -25,13 +25,26 @@ public class Board extends JPanel {
     private Brick[] bricks;
     private boolean inGame = true;
 
-    // [BUILDER] Board does not know how a level is laid out. It receives a
-    // builder from outside (from Breakout). The type is the interface, so
-    // Board works the same with the classic grid and with the pyramid.
+    /*
+     * [BUILDER]  FIELD  levelBuilder        (the one field we added)
+     *   What it is    : the builder that will make this board's level.
+     *   Why this type : LevelBuilder is the interface, so Board works the
+     *                   same with the classic grid and with the pyramid. It
+     *                   does not know which one it has.
+     *   Why final     : set once in the constructor, never replaced.
+     */
     private final LevelBuilder levelBuilder;
 
-    // [BUILDER] BEFORE: public Board() with no parameters.
-    // AFTER: whoever creates the Board passes in which layout to build.
+    /*
+     * [BUILDER]  CONSTRUCTOR
+     *   Takes         : the builder to use. BEFORE the refactor this
+     *                   constructor took nothing: public Board().
+     *   What it does  : stores the builder, then runs the normal set-up.
+     *   Called by     : Breakout.initUI().
+     *   Why like this : Board must not pick the layout itself, so the
+     *                   builder is handed in from outside.
+     *   Return type   : none. A constructor never has one.
+     */
     public Board(LevelBuilder levelBuilder) {
 
         // IMPORTANT: this must be set BEFORE initBoard(), because
@@ -53,16 +66,15 @@ public class Board extends JPanel {
     private void gameInit() {
 
         /*
-         * [BUILDER]  Board is the CLIENT that uses the Director
-         *                                                    (slides 32, 37)
-         * WHAT HAPPENS HERE
-         *   The next three lines are the Client's lines on slide 37:
-         *       new RobotEngineer(oldStyle)  ->  new LevelDirector(levelBuilder)
-         *       robotEng.makeRobot()         ->  director.makeLevel()
-         *       robotEng.getRobot()          ->  director.getLevel()
-         *   After that, Board takes the three parts out of the Level.
+         * [BUILDER]  METHOD  gameInit()
+         * Here Board is the CLIENT that uses the director.   (slides 32, 37)
          *
-         * BEFORE THE REFACTOR this method built the level by hand:
+         *   Why it is here: it sets up a new game. It is original game
+         *                   code, but its first half was rewritten.
+         *   Called by     : initBoard(), which the constructor calls.
+         *   Returns       : nothing (void). It fills Board's own fields.
+         *
+         * BEFORE THE REFACTOR it built the level by hand:
          *
          *     bricks = new Brick[Commons.N_OF_BRICKS];
          *     ball = new Ball();
@@ -78,10 +90,22 @@ public class Board extends JPanel {
          *     gets a Ball from the level and does not know, or need to
          *     know, whether it is really a FastBall.
          */
+
+        // 1. Create the director and give it the builder Board received.
+        //    Slide 37: RobotEngineer robotEng = new RobotEngineer(oldStyle);
         var director = new LevelDirector(levelBuilder);
+
+        // 2. Tell the director to run the build steps.
+        //    Slide 37: robotEng.makeRobot();
         director.makeLevel();
+
+        // 3. Ask the director for the finished product.
+        //    Slide 37: Robot firstRobot = robotEng.getRobot();
         Level level = director.getLevel();
 
+        // 4. Take the three parts out of the Level and keep them in Board's
+        //    own fields. The game code below is the original code and uses
+        //    these fields exactly as before.
         paddle = level.getPaddle();
         ball = level.getBall();
         bricks = level.getBricks();

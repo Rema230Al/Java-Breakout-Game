@@ -4,22 +4,30 @@ import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
 /*
- * [ABSTRACT FACTORY]  Role: PRODUCT, the paddle                (slides 42, 59)
- *
- * WHAT THIS IS
- *   The normal paddle. Like Ball, it does two jobs in the pattern:
+ * [ABSTRACT FACTORY]  This class is a PRODUCT: the normal paddle.
+ *                                                              (slides 42, 59)
+ * WHY IT MATTERS FOR THE PATTERN
+ *   It does two jobs:
  *   1. It is the Classic family's paddle, the one ClassicFactory creates.
  *   2. It is the TYPE the rest of the game uses for any paddle. HardFactory
  *      creates a FastPaddle but hands it out as a Paddle.
  *
  * IN THE SLIDES
- *   The common, apparent type from slide 42, standing in for the
- *   AbstractProduct box on slide 59. See the comment in Ball.java for why
- *   we did not add a separate abstract class.
+ *   The common, apparent type from slide 42. It stands in for the
+ *   AbstractProduct box on slide 59.
  *
- * HOW WE DID IT HERE, AND WHY
- *   The code of this original class did not change; only this comment was
- *   added.
+ * WHO USES IT
+ *   - ClassicFactory.createPaddle() creates it.
+ *   - Level carries it from the builder to Board, and Board plays with it.
+ *   - FastPaddle extends it and replaces move().
+ *
+ * DIFFERENT FROM THE SLIDES, AND WHY
+ *   Slide 59 draws a separate abstract product above the two versions. We
+ *   did not add one. The original Paddle already has everything a paddle
+ *   needs, so the Hard version only has to extend it and change move().
+ *
+ * WHAT CHANGED IN THIS FILE
+ *   Nothing but this comment. All the code below is the original game.
  */
 public class Paddle extends Sprite  {
 

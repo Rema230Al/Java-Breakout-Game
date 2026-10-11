@@ -1,25 +1,29 @@
 package com.zetcode;
 
 /*
- * [BUILDER]  Role: BUILDER (the interface)                     (slides 31, 34)
+ * [BUILDER]  This interface is the BUILDER.                    (slides 31, 34)
  *
- * WHAT THIS IS
- *   The list of steps needed to build a Level: one method per part, plus
- *   getLevel() to collect the finished result.
+ * WHY IT EXISTS
+ *   The pattern needs one type that lists the steps for building a Level,
+ *   so the director can give its orders without knowing which layout it is
+ *   talking to. This is that list: one method per part, plus getLevel() to
+ *   collect the result.
  *
  * IN THE SLIDES
- *   - The Builder box on slide 31, with its BuildPart() method.
- *   - RobotBuilder on slide 34: buildRobotHead(), buildRobotTorso(),
- *     buildRobotArms(), buildRobotLegs(), getRobot().
- *     Ours: buildPaddle(), buildBall(), buildBricks(), getLevel().
+ *   The Builder box on slide 31, and RobotBuilder on slide 34:
+ *   buildRobotHead(), buildRobotTorso(), buildRobotArms(), buildRobotLegs()
+ *   and getRobot().
  *
- * HOW WE DID IT HERE, AND WHY
- *   - Three build methods, because a Level has three parts.
- *   - An interface, like the slide. The builders share method names only,
- *     not code.
- *   - Every layout implements these same steps in its own way. Because
- *     they all share this interface, LevelDirector and Board can work with
- *     ANY layout without knowing which one it is.
+ * WHO USES IT
+ *   - ClassicLevelBuilder and PyramidLevelBuilder implement it.
+ *   - Breakout holds the chosen builder in a variable of this type.
+ *   - Board and LevelDirector each keep it in a field of this type.
+ *   - LevelDirector calls all four methods.
+ *
+ * NO CONSTRUCTOR, NO FIELDS, NO METHOD BODIES
+ *   An interface only lists methods. Each method below ends with ";" and
+ *   has no { } body. The bodies are in the two concrete builders. The
+ *   methods are public automatically, so "public" is not written here.
  *
  * GOOD TO KNOW
  *   - Slide 38 says the builder interface "reflects the process of
@@ -27,16 +31,47 @@ package com.zetcode;
  *     You can read the recipe for a level right here.
  *   - How this differs from Abstract Factory: a factory method RETURNS its
  *     object straight away (createBall() gives you a ball). A build method
- *     returns nothing (void). The parts collect inside the builder, and you
- *     take the whole Level at the end with getLevel().
+ *     returns nothing. The parts collect inside the builder, and you take
+ *     the whole Level at the end with getLevel().
  */
 public interface LevelBuilder {
 
-    void buildPaddle();     // step: create the paddle
+    /*
+     * METHOD  buildPaddle()
+     *   Why it is here: a level has a paddle, so building one is a step.
+     *   Called by     : LevelDirector.makeLevel().
+     *   Returns       : nothing (void). The builder keeps the paddle inside
+     *                   the Level it is filling.
+     *   In the slides : buildRobotHead() and the other build methods on
+     *                   slide 34.
+     */
+    void buildPaddle();
 
-    void buildBall();       // step: create the ball
+    /*
+     * METHOD  buildBall()
+     *   The same kind of step, for the ball.
+     *   Called by     : LevelDirector.makeLevel().
+     *   Returns       : nothing (void).
+     */
+    void buildBall();
 
-    void buildBricks();     // step: create and position all the bricks
+    /*
+     * METHOD  buildBricks()
+     *   The step that differs between layouts. It creates all the bricks
+     *   and decides where each one goes.
+     *   Called by     : LevelDirector.makeLevel().
+     *   Returns       : nothing (void).
+     */
+    void buildBricks();
 
-    Level getLevel();       // hand back the finished product
+    /*
+     * METHOD  getLevel()
+     *   Why it is here: the build steps return nothing, so there must be a
+     *                   way to collect the finished product.
+     *   Called by     : LevelDirector.getLevel(), which passes the Level on
+     *                   to Board.
+     *   Returns       : the Level the builder has been filling.
+     *   In the slides : getRobot() on slide 34, GetResult() on slide 31.
+     */
+    Level getLevel();
 }
