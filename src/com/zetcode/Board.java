@@ -84,11 +84,8 @@ public class Board extends JPanel {
          *             bricks[k++] = new Brick(j * 40 + 30, i * 10 + 50);
          *
          * WHY IT IS BETTER NOW
-         *   - Board's job is to run the game. It no longer also decides
-         *     how a level is laid out, so a new layout does not touch Board.
-         *   - [ABSTRACT FACTORY] Board no longer writes "new Ball()". It
-         *     gets a Ball from the level and does not know, or need to
-         *     know, whether it is really a FastBall.
+         *   Board's job is to run the game. It no longer also decides how
+         *   a level is laid out, so a new layout does not touch Board.
          */
 
         // 1. Create the director and give it the builder Board received.
@@ -304,10 +301,7 @@ public class Board extends JPanel {
                         ball.setYDir(-1);
                     }
 
-                    // [ABSTRACT FACTORY] Was "bricks[i].setDestroyed(true);"
-                    // Now the brick decides what a hit means: a normal Brick
-                    // breaks, a StrongBrick (Hard mode) needs a second hit.
-                    bricks[i].hit();
+                    bricks[i].setDestroyed(true);
                 }
             }
         }

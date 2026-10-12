@@ -49,23 +49,20 @@ public class PyramidLevelBuilder implements LevelBuilder {
     private static final int BRICK_COUNT = 2 + 3 + 4 + 5 + 6;
 
     /*
-     * FIELDS  factory, level
-     *   The same two fields as in ClassicLevelBuilder: the factory this
-     *   builder gets every object from, and the Level it is filling.
+     * FIELD  level
+     *   The same field as in ClassicLevelBuilder: the Level this builder is
+     *   filling.
      */
-    private final GameFactory factory;
     private final Level level;
 
     /*
      * CONSTRUCTOR
-     *   Takes         : the factory to get the objects from.
-     *   What it does  : stores the factory, and creates one EMPTY Level to
-     *                   fill.
+     *   Takes         : nothing.
+     *   What it does  : creates one EMPTY Level to fill.
      *   Called by     : Breakout.initUI(), when the layout is "Pyramid".
      *   Return type   : none. A constructor never has one.
      */
-    public PyramidLevelBuilder(GameFactory factory) {
-        this.factory = factory;
+    public PyramidLevelBuilder() {
         this.level = new Level();
     }
 
@@ -76,14 +73,14 @@ public class PyramidLevelBuilder implements LevelBuilder {
      *   Why @Override : the method is declared in LevelBuilder, and this is
      *                   its body. @Override makes the compiler check that
      *                   the name matches the interface exactly.
-     *   What it does  : asks the factory for a paddle and stores it in the
-     *                   Level. Same as in ClassicLevelBuilder.
+     *   What it does  : creates the paddle and stores it in the Level. Same
+     *                   as in ClassicLevelBuilder.
      *   Called by     : LevelDirector.makeLevel().
      *   Returns       : nothing (void).
      */
     @Override
     public void buildPaddle() {
-        level.setPaddle(factory.createPaddle());
+        level.setPaddle(new Paddle());
     }
 
     /*
@@ -94,7 +91,7 @@ public class PyramidLevelBuilder implements LevelBuilder {
      */
     @Override
     public void buildBall() {
-        level.setBall(factory.createBall());
+        level.setBall(new Ball());
     }
 
     /*
@@ -105,7 +102,7 @@ public class PyramidLevelBuilder implements LevelBuilder {
      *                   Row i has i + 2 bricks. A brick is 40 pixels wide,
      *                   so a row that is one brick shorter starts 20 pixels
      *                   (half a brick) further right. That keeps the
-     *                   pyramid centred. Each brick comes from the factory.
+     *                   pyramid centred.
      *   Called by     : LevelDirector.makeLevel().
      *   Returns       : nothing (void). The array is stored in the Level.
      */
@@ -122,7 +119,7 @@ public class PyramidLevelBuilder implements LevelBuilder {
             int startX = 30 + (ROWS - 1 - i) * 20;   // shorter rows start further right
 
             for (int j = 0; j < count; j++) {
-                bricks[k] = factory.createBrick(startX + j * 40, i * 10 + 50);
+                bricks[k] = new Brick(startX + j * 40, i * 10 + 50);
                 k++;
             }
         }

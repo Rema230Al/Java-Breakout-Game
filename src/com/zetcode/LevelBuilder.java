@@ -29,10 +29,8 @@ package com.zetcode;
  *   - Slide 38 says the builder interface "reflects the process of
  *     constructing the product more than any other creational patterns".
  *     You can read the recipe for a level right here.
- *   - How this differs from Abstract Factory: a factory method RETURNS its
- *     object straight away (createBall() gives you a ball). A build method
- *     returns nothing. The parts collect inside the builder, and you take
- *     the whole Level at the end with getLevel().
+ *   - A build method returns nothing. The parts collect inside the
+ *     builder, and you take the whole Level at the end with getLevel().
  */
 public interface LevelBuilder {
 

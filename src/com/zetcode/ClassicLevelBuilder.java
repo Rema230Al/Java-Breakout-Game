@@ -17,15 +17,10 @@ package com.zetcode;
  *     its four methods.
  *
  * WHERE THE TWO PATTERNS MEET
- *   This builder never writes "new Ball()". It asks the GameFactory it was
- *   given. So:
- *       the BUILDER decides how many bricks there are and where they go,
- *       the FACTORY decides which KIND of object each one is.
- *
- * DIFFERENT FROM THE SLIDES, AND WHY
- *   The slide's builder writes its parts directly ("Tin Head"). Ours asks
- *   a factory, because we have two kinds of parts (Classic and Hard) and a
- *   layout should not care which kind it is placing.
+ *   This builder writes "new Paddle()", "new Ball()" and "new Brick(x, y)".
+ *   Each of those objects gets its picture from the ResourceManager while
+ *   it is being created (see loadImage() in each class). The builder does
+ *   not know that, and it never touches the ResourceManager itself.
  */
 public class ClassicLevelBuilder implements LevelBuilder {
 
@@ -42,38 +37,25 @@ public class ClassicLevelBuilder implements LevelBuilder {
     private static final int COLS = 6;
 
     /*
-     * FIELD  factory
-     *   What it is    : the factory this builder gets every object from.
-     *   Why this type : GameFactory is the interface, so this builder works
-     *                   with the Classic family and with the Hard family
-     *                   without knowing which one it has.
-     *   Why final     : set once in the constructor, never replaced.
-     */
-    private final GameFactory factory;
-
-    /*
      * FIELD  level
      *   What it is    : the product being built. The build steps fill it,
      *                   and getLevel() hands it over.
+     *   Why final     : set once in the constructor, never replaced.
      *   In the slides : "private Robot robot;" on slide 35.
      */
     private final Level level;
 
     /*
      * CONSTRUCTOR
-     *   Takes         : the factory to get the objects from.
-     *   What it does  : stores the factory, and creates one EMPTY Level to
-     *                   fill. No paddle, ball or brick exists yet.
-     *   Called by     : Breakout.initUI(), which passes in the factory it
-     *                   got from FactoryProducer.
-     *   Why like this : the builder must not choose Classic or Hard itself,
-     *                   so the factory is handed in from outside.
+     *   Takes         : nothing.
+     *   What it does  : creates one EMPTY Level to fill. No paddle, ball or
+     *                   brick exists yet.
+     *   Called by     : Breakout.initUI(), when the layout is "Classic grid".
      *   In the slides : OldRobotBuilder() on slide 35 also creates its
      *                   empty product in the constructor.
      *   Return type   : none. A constructor never has one.
      */
-    public ClassicLevelBuilder(GameFactory factory) {
-        this.factory = factory;
+    public ClassicLevelBuilder() {
         this.level = new Level();
     }
 
@@ -86,20 +68,19 @@ public class ClassicLevelBuilder implements LevelBuilder {
      *                   the name matches the interface exactly.
      *   Why public    : methods of an interface are public, so the class
      *                   that implements them must write "public".
-     *   What it does  : asks the factory for a paddle and stores it in the
-     *                   Level. It never writes "new Paddle()".
+     *   What it does  : creates the paddle and stores it in the Level.
      *   Called by     : LevelDirector.makeLevel().
      *   Returns       : nothing (void). The paddle is now inside the Level.
      *   In the slides : buildRobotHead() on slide 35.
      */
     @Override
     public void buildPaddle() {
-        level.setPaddle(factory.createPaddle());
+        level.setPaddle(new Paddle());
     }
 
     /*
      * METHOD  buildBall()
-     *   The same step for the ball: ask the factory, store the result.
+     *   The same step for the ball: create it, store it in the Level.
      *   @Override and public are there for the same reasons as above.
      *   Called by     : LevelDirector.makeLevel().
      *   Returns       : nothing (void).
@@ -110,7 +91,7 @@ public class ClassicLevelBuilder implements LevelBuilder {
      */
     @Override
     public void buildBall() {
-        level.setBall(factory.createBall());
+        level.setBall(new Ball());
     }
 
     /*
@@ -119,8 +100,8 @@ public class ClassicLevelBuilder implements LevelBuilder {
      *                   CLASSIC one. The pyramid builder differs only here.
      *   What it does  : makes an array for 30 bricks, then goes through 5
      *                   rows and 6 columns. For each spot it works out the
-     *                   position and asks the factory for a brick there.
-     *                   Last, it stores the full array in the Level.
+     *                   position and creates a brick there. Last, it stores
+     *                   the full array in the Level.
      *   Called by     : LevelDirector.makeLevel().
      *   Returns       : nothing (void).
      *   Good to know  : the loop and its numbers were moved here unchanged
@@ -137,7 +118,7 @@ public class ClassicLevelBuilder implements LevelBuilder {
             for (int j = 0; j < COLS; j++) {
                 // Same positions as the original game:
                 // x = column * 40 + 30, y = row * 10 + 50
-                bricks[k] = factory.createBrick(j * 40 + 30, i * 10 + 50);
+                bricks[k] = new Brick(j * 40 + 30, i * 10 + 50);
                 k++;
             }
         }

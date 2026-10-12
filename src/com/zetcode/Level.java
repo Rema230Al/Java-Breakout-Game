@@ -25,7 +25,7 @@ package com.zetcode;
  *
  * GOOD TO KNOW
  *   The product does not know it was "built", and it does not know about
- *   builders or factories. All the knowledge about how to make a level is
+ *   builders. All the knowledge about how to make a level is
  *   in the builders.
  */
 public class Level {
@@ -35,10 +35,6 @@ public class Level {
      *   What they are : the three parts of a level.
      *   Why private   : nobody reaches in directly. Parts go in through the
      *                   setters and come out through the getters.
-     *   Why this type : Paddle, Ball and Brick are the normal classes. In
-     *                   Hard mode the objects are really a FastPaddle, a
-     *                   FastBall and StrongBricks. They still fit here,
-     *                   because each of those IS a Paddle, a Ball, a Brick.
      */
     private Paddle paddle;
     private Ball ball;

@@ -1,34 +1,24 @@
 package com.zetcode;
 
-import javax.swing.ImageIcon;
-
 /*
- * [ABSTRACT FACTORY]  This class is a PRODUCT: the normal brick.
- *                                                              (slides 42, 59)
+ * [SINGLETON]  This class is a CLIENT of the singleton.         (slides 8, 10)
+ *
  * WHY IT MATTERS FOR THE PATTERN
- *   It does two jobs:
- *   1. It is the Classic family's brick, the one ClassicFactory creates.
- *   2. It is the TYPE the rest of the game uses for any brick. HardFactory
- *      creates a StrongBrick but hands it out as a Brick.
+ *   A brick needs a picture. It used to load the file itself. Now it asks
+ *   the one ResourceManager for it, like every other piece of the game.
  *
  * IN THE SLIDES
- *   The common, apparent type from slide 42. It stands in for the
- *   AbstractProduct box on slide 59.
+ *   SingletonTest on slide 8: first get the instance, then call a method
+ *   on it. Slide 10 says other classes use a singleton "by just getting
+ *   it". Nobody hands the ResourceManager to the brick.
  *
- * WHO USES IT
- *   - ClassicFactory.createBrick() creates it.
- *   - The level builders collect the bricks in an array, Level carries the
- *     array to Board, and Board plays with them.
- *   - StrongBrick extends it and replaces hit().
- *
- * DIFFERENT FROM THE SLIDES, AND WHY
- *   Slide 59 draws a separate abstract product above the two versions. We
- *   did not add one. The original Brick already has everything a brick
- *   needs, so the Hard version only has to extend it and change hit().
+ * WHO USES THE BRICK
+ *   - A level builder creates it in buildBricks(), once per brick.
+ *   - Level carries it from the builder to Board, and Board plays with it.
  *
  * WHAT CHANGED IN THIS FILE
- *   One method was added, hit(), at the bottom. It is the only code we
- *   added to an original product class. The rest is the original game.
+ *   Only loadImage(), and the ImageIcon import it no longer needs. The
+ *   rest is the original game.
  */
 public class Brick extends Sprite {
 
@@ -50,10 +40,24 @@ public class Brick extends Sprite {
         getImageDimensions();
     }
     
+    /*
+     * [SINGLETON]  METHOD  loadImage()        (the one method we changed)
+     *   Why it is here: a brick needs its picture before it can be measured
+     *                   and drawn.
+     *   What it does  : gets the one ResourceManager, then takes the brick
+     *                   picture from it. BEFORE the refactor it loaded the
+     *                   file itself:
+     *                       var ii = new ImageIcon("src/resources/brick.png");
+     *                       image = ii.getImage();
+     *   Called by     : initBrick(), which the constructor calls.
+     *   Returns       : nothing (void). It fills the field "image" that
+     *                   Brick inherits from Sprite.
+     *   In the slides : the two lines of SingletonTest on slide 8.
+     */
     private void loadImage() {
-        
-        var ii = new ImageIcon("src/resources/brick.png");
-        image = ii.getImage();        
+
+        ResourceManager resources = ResourceManager.getInstance();
+        image = resources.getBrickImage();
     }
 
     boolean isDestroyed() {
@@ -64,26 +68,5 @@ public class Brick extends Sprite {
     void setDestroyed(boolean val) {
 
         destroyed = val;
-    }
-
-    /*
-     * [ABSTRACT FACTORY]  METHOD  hit()        (the one method we added)
-     *   Why it is here: so that the BRICK decides what a hit means, not
-     *                   Board. Before, Board called setDestroyed(true)
-     *                   itself, so every brick always broke on the first
-     *                   hit, and a two-hit brick was impossible without an
-     *                   "if" in Board.
-     *   What it does  : a normal brick breaks right away.
-     *   Called by     : Board.checkCollision(), each time the ball touches
-     *                   a brick that is not destroyed yet.
-     *   Returns       : nothing (void).
-     *   Overridden by : StrongBrick, which needs two hits. Board calls
-     *                   hit() the same way for both kinds of brick. That is
-     *                   polymorphism.
-     *   Why no public : the other methods of this class have none either.
-     */
-    void hit() {
-
-        setDestroyed(true);
     }
 }

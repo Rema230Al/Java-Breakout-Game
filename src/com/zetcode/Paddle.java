@@ -1,33 +1,26 @@
 package com.zetcode;
 
 import java.awt.event.KeyEvent;
-import javax.swing.ImageIcon;
 
 /*
- * [ABSTRACT FACTORY]  This class is a PRODUCT: the normal paddle.
- *                                                              (slides 42, 59)
+ * [SINGLETON]  This class is a CLIENT of the singleton.         (slides 8, 10)
+ *
  * WHY IT MATTERS FOR THE PATTERN
- *   It does two jobs:
- *   1. It is the Classic family's paddle, the one ClassicFactory creates.
- *   2. It is the TYPE the rest of the game uses for any paddle. HardFactory
- *      creates a FastPaddle but hands it out as a Paddle.
+ *   A paddle needs a picture. It used to load the file itself. Now it asks
+ *   the one ResourceManager for it, like every other piece of the game.
  *
  * IN THE SLIDES
- *   The common, apparent type from slide 42. It stands in for the
- *   AbstractProduct box on slide 59.
+ *   SingletonTest on slide 8: first get the instance, then call a method
+ *   on it. Slide 10 says other classes use a singleton "by just getting
+ *   it". Nobody hands the ResourceManager to the paddle.
  *
- * WHO USES IT
- *   - ClassicFactory.createPaddle() creates it.
+ * WHO USES THE PADDLE
+ *   - A level builder creates it in buildPaddle().
  *   - Level carries it from the builder to Board, and Board plays with it.
- *   - FastPaddle extends it and replaces move().
- *
- * DIFFERENT FROM THE SLIDES, AND WHY
- *   Slide 59 draws a separate abstract product above the two versions. We
- *   did not add one. The original Paddle already has everything a paddle
- *   needs, so the Hard version only has to extend it and change move().
  *
  * WHAT CHANGED IN THIS FILE
- *   Nothing but this comment. All the code below is the original game.
+ *   Only loadImage(), and the ImageIcon import it no longer needs. The
+ *   rest is the original game.
  */
 public class Paddle extends Sprite  {
 
@@ -46,11 +39,25 @@ public class Paddle extends Sprite  {
         resetState();
     }
     
+    /*
+     * [SINGLETON]  METHOD  loadImage()        (the one method we changed)
+     *   Why it is here: a paddle needs its picture before it can be measured
+     *                   and drawn.
+     *   What it does  : gets the one ResourceManager, then takes the paddle
+     *                   picture from it. BEFORE the refactor it loaded the
+     *                   file itself:
+     *                       var ii = new ImageIcon("src/resources/paddle.png");
+     *                       image = ii.getImage();
+     *   Called by     : initPaddle(), which the constructor calls.
+     *   Returns       : nothing (void). It fills the field "image" that
+     *                   Paddle inherits from Sprite.
+     *   In the slides : the two lines of SingletonTest on slide 8.
+     */
     private void loadImage() {
-        
-        var ii = new ImageIcon("src/resources/paddle.png");
-        image = ii.getImage();        
-    }    
+
+        ResourceManager resources = ResourceManager.getInstance();
+        image = resources.getPaddleImage();
+    }
 
     void move() {
 
