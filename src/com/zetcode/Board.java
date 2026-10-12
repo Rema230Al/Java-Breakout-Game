@@ -16,6 +16,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+/*
+ * The game panel. It gets a finished Level, then runs the game: the timer,
+ * the moves, the collisions and the drawing.
+ * Original game code, except the constructor, gameInit() and bricks.length.
+ */
+// [BUILDER] CLIENT: uses the director to get its Level (slide 37)
 public class Board extends JPanel {
 
     private Timer timer;
@@ -25,30 +31,14 @@ public class Board extends JPanel {
     private Brick[] bricks;
     private boolean inGame = true;
 
-    /*
-     * [BUILDER]  FIELD  levelBuilder        (the one field we added)
-     *   What it is    : the builder that will make this board's level.
-     *   Why this type : LevelBuilder is the interface, so Board works the
-     *                   same with the classic grid and with the pyramid. It
-     *                   does not know which one it has.
-     *   Why final     : set once in the constructor, never replaced.
-     */
+    // [BUILDER] the builder Board was given. Interface type: Board does not
+    // know which builder it is.
     private final LevelBuilder levelBuilder;
 
-    /*
-     * [BUILDER]  CONSTRUCTOR
-     *   Takes         : the builder to use. BEFORE the refactor this
-     *                   constructor took nothing: public Board().
-     *   What it does  : stores the builder, then runs the normal set-up.
-     *   Called by     : Breakout.initUI().
-     *   Why like this : Board must not pick the layout itself, so the
-     *                   builder is handed in from outside.
-     *   Return type   : none. A constructor never has one.
-     */
+    // [BUILDER] receives the builder from Breakout (was: public Board())
     public Board(LevelBuilder levelBuilder) {
 
-        // IMPORTANT: this must be set BEFORE initBoard(), because
-        // initBoard() -> gameInit() uses it immediately.
+        // set before initBoard(), because gameInit() uses it straight away
         this.levelBuilder = levelBuilder;
 
         initBoard();
@@ -65,44 +55,14 @@ public class Board extends JPanel {
 
     private void gameInit() {
 
-        /*
-         * [BUILDER]  METHOD  gameInit()
-         * Here Board is the CLIENT that uses the director.   (slides 32, 37)
-         *
-         *   Why it is here: it sets up a new game. It is original game
-         *                   code, but its first half was rewritten.
-         *   Called by     : initBoard(), which the constructor calls.
-         *   Returns       : nothing (void). It fills Board's own fields.
-         *
-         * BEFORE THE REFACTOR it built the level by hand:
-         *
-         *     bricks = new Brick[Commons.N_OF_BRICKS];
-         *     ball = new Ball();
-         *     paddle = new Paddle();
-         *     for (int i = 0; i < 5; i++)
-         *         for (int j = 0; j < 6; j++)
-         *             bricks[k++] = new Brick(j * 40 + 30, i * 10 + 50);
-         *
-         * WHY IT IS BETTER NOW
-         *   Board's job is to run the game. It no longer also decides how
-         *   a level is laid out, so a new layout does not touch Board.
-         */
-
-        // 1. Create the director and give it the builder Board received.
-        //    Slide 37: RobotEngineer robotEng = new RobotEngineer(oldStyle);
+        // [BUILDER] CLIENT CODE (slide 37): give the builder to a director,
+        // run the steps, collect the finished product.
+        // Before: new Ball(), new Paddle() and the brick loop were here.
         var director = new LevelDirector(levelBuilder);
-
-        // 2. Tell the director to run the build steps.
-        //    Slide 37: robotEng.makeRobot();
         director.makeLevel();
-
-        // 3. Ask the director for the finished product.
-        //    Slide 37: Robot firstRobot = robotEng.getRobot();
         Level level = director.getLevel();
 
-        // 4. Take the three parts out of the Level and keep them in Board's
-        //    own fields. The game code below is the original code and uses
-        //    these fields exactly as before.
+        // take the three parts out of the Level
         paddle = level.getPaddle();
         ball = level.getBall();
         bricks = level.getBricks();
@@ -141,8 +101,7 @@ public class Board extends JPanel {
         g2d.drawImage(paddle.getImage(), paddle.getX(), paddle.getY(),
                 paddle.getImageWidth(), paddle.getImageHeight(), this);
 
-        // [BUILDER] Was "i < Commons.N_OF_BRICKS". Now the level itself
-        // tells us how many bricks there are (30 classic, 20 pyramid).
+        // [BUILDER] bricks.length (was N_OF_BRICKS): the level says how many
         for (int i = 0; i < bricks.length; i++) {
 
             if (!bricks[i].isDestroyed()) {
@@ -211,8 +170,7 @@ public class Board extends JPanel {
             stopGame();
         }
 
-        // [BUILDER] Victory check: was "Commons.N_OF_BRICKS" in both places.
-        // With bricks.length, winning works for any layout size.
+        // [BUILDER] bricks.length again, so winning works with 30 bricks or 20
         for (int i = 0, j = 0; i < bricks.length; i++) {
 
             if (bricks[i].isDestroyed()) {
@@ -268,7 +226,7 @@ public class Board extends JPanel {
             }
         }
 
-        // [BUILDER] Was "i < Commons.N_OF_BRICKS".
+        // [BUILDER] bricks.length again
         for (int i = 0; i < bricks.length; i++) {
 
             if ((ball.getRect()).intersects(bricks[i].getRect())) {
