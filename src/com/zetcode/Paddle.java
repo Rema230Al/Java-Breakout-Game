@@ -2,11 +2,7 @@ package com.zetcode;
 
 import java.awt.event.KeyEvent;
 
-/*
- * The paddle. The player moves it with the left and right arrow keys.
- * Original game code, except loadImage().
- */
-// [SINGLETON] CLIENT: gets its picture from the ResourceManager
+// SINGLETON CLIENT
 public class Paddle extends Sprite  {
 
     private int dx;
@@ -24,8 +20,7 @@ public class Paddle extends Sprite  {
         resetState();
     }
     
-    // [SINGLETON] CLIENT CODE (slide 8): get the one instance, then use it.
-    // Before: var ii = new ImageIcon("src/resources/paddle.png"); image = ii.getImage();
+    
     private void loadImage() {
 
         ResourceManager resources = ResourceManager.getInstance();

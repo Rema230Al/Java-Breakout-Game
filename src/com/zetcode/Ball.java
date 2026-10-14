@@ -1,11 +1,6 @@
 package com.zetcode;
 
-/*
- * The ball. It moves one pixel per tick and bounces off the side and top
- * walls.
- * Original game code, except loadImage().
- */
-// [SINGLETON] CLIENT: gets its picture from the ResourceManager
+// SINGLETON CLIENT
 public class Ball extends Sprite {
 
     private int xdir;
@@ -26,8 +21,7 @@ public class Ball extends Sprite {
         resetState();
     }
 
-    // [SINGLETON] CLIENT CODE (slide 8): get the one instance, then use it.
-    // Before: var ii = new ImageIcon("src/resources/ball.png"); image = ii.getImage();
+    
     private void loadImage() {
 
         ResourceManager resources = ResourceManager.getInstance();

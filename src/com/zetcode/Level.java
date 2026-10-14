@@ -1,18 +1,13 @@
 package com.zetcode;
 
-/*
- * A finished level: one paddle, one ball and the bricks. It only holds
- * them. It has no logic and does not know who built it.
- */
-// [BUILDER] PRODUCT (slide 33: Robot)
+// BUILDER PRODUCT 
 public class Level {
 
-    // the three parts of a level
     private Paddle paddle;
     private Ball ball;
     private Brick[] bricks;
 
-    // setters: the builders put the parts in
+    // called by the builder
     void setPaddle(Paddle paddle) {
         this.paddle = paddle;
     }
@@ -25,7 +20,7 @@ public class Level {
         this.bricks = bricks;
     }
 
-    // getters: Board takes the parts out
+    //called by Board
     Paddle getPaddle() {
         return paddle;
     }

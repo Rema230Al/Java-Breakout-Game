@@ -16,12 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-/*
- * The game panel. It gets a finished Level, then runs the game: the timer,
- * the moves, the collisions and the drawing.
- * Original game code, except the constructor, gameInit() and bricks.length.
- */
-// [BUILDER] CLIENT: uses the director to get its Level (slide 37)
+// BUILDER CLIENT uses the director 
 public class Board extends JPanel {
 
     private Timer timer;
@@ -31,14 +26,12 @@ public class Board extends JPanel {
     private Brick[] bricks;
     private boolean inGame = true;
 
-    // [BUILDER] the builder Board was given. Interface type: Board does not
-    // know which builder it is.
+    
     private final LevelBuilder levelBuilder;
 
-    // [BUILDER] receives the builder from Breakout (was: public Board())
+    //builder received from Breakout
     public Board(LevelBuilder levelBuilder) {
 
-        // set before initBoard(), because gameInit() uses it straight away
         this.levelBuilder = levelBuilder;
 
         initBoard();
@@ -55,14 +48,13 @@ public class Board extends JPanel {
 
     private void gameInit() {
 
-        // [BUILDER] CLIENT CODE (slide 37): give the builder to a director,
-        // run the steps, collect the finished product.
-        // Before: new Ball(), new Paddle() and the brick loop were here.
+        
         var director = new LevelDirector(levelBuilder);
         director.makeLevel();
+
+        //هنا كل المعمعة خلصت بس نستخرج الليفل
         Level level = director.getLevel();
 
-        // take the three parts out of the Level
         paddle = level.getPaddle();
         ball = level.getBall();
         bricks = level.getBricks();
@@ -101,7 +93,7 @@ public class Board extends JPanel {
         g2d.drawImage(paddle.getImage(), paddle.getX(), paddle.getY(),
                 paddle.getImageWidth(), paddle.getImageHeight(), this);
 
-        // [BUILDER] bricks.length (was N_OF_BRICKS): the level says how many
+        
         for (int i = 0; i < bricks.length; i++) {
 
             if (!bricks[i].isDestroyed()) {
@@ -170,7 +162,7 @@ public class Board extends JPanel {
             stopGame();
         }
 
-        // [BUILDER] bricks.length again, so winning works with 30 bricks or 20
+        
         for (int i = 0, j = 0; i < bricks.length; i++) {
 
             if (bricks[i].isDestroyed()) {
@@ -226,7 +218,7 @@ public class Board extends JPanel {
             }
         }
 
-        // [BUILDER] bricks.length again
+        
         for (int i = 0; i < bricks.length; i++) {
 
             if ((ball.getRect()).intersects(bricks[i].getRect())) {

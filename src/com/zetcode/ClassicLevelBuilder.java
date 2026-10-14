@@ -1,37 +1,32 @@
 package com.zetcode;
 
-/*
- * Builds the classic level: 5 rows of 6 bricks, the same as the original
- * game. Breakout creates it when the player picks "Classic grid".
- */
-// [BUILDER] CONCRETE BUILDER (slide 35: OldRobotBuilder)
+// CONCRETE BUILDER 1 
 public class ClassicLevelBuilder implements LevelBuilder {
 
     private static final int ROWS = 5;
     private static final int COLS = 6;
 
-    // [BUILDER] the PRODUCT this builder is filling
+    // PRODUCT being built
     private final Level level;
 
-    // [BUILDER] the builder starts with an EMPTY product (slide 35)
+
     public ClassicLevelBuilder() {
         this.level = new Level();
     }
 
-    // [BUILDER] BUILD STEP 1: the paddle
+    // STEP 1
     @Override
     public void buildPaddle() {
         level.setPaddle(new Paddle());
     }
 
-    // [BUILDER] BUILD STEP 2: the ball
+    // STEP 2
     @Override
     public void buildBall() {
         level.setBall(new Ball());
     }
 
-    // [BUILDER] BUILD STEP 3: the bricks. This loop was moved here from
-    // the old Board.gameInit().
+    // STEP 3
     @Override
     public void buildBricks() {
 
@@ -49,7 +44,7 @@ public class ClassicLevelBuilder implements LevelBuilder {
         level.setBricks(bricks);
     }
 
-    // [BUILDER] GET RESULT: hands over the finished product (slide 31)
+    
     @Override
     public Level getLevel() {
         return level;
