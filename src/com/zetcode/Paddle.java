@@ -1,9 +1,11 @@
 package com.zetcode;
 
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
 // SINGLETON CLIENT
-public class Paddle extends Sprite  {
+// COMPOSITE: LEAF (slide 37: Developer)
+public class Paddle extends Sprite implements GameObject {
 
     private int dx;
 
@@ -77,4 +79,16 @@ public class Paddle extends Sprite  {
         x = Commons.INIT_PADDLE_X;
         y = Commons.INIT_PADDLE_Y;
     }
+
+    // COMPOSITE: LEAF methods (slide 37: Developer)
+    public void draw(Graphics2D g2d) {
+        g2d.drawImage(getImage(), getX(), getY(),
+                getImageWidth(), getImageHeight(), null);
+    }
+
+    public void add(GameObject gameObject) { }
+
+    public void remove(GameObject gameObject) { }
+
+    public GameObject getChild(int i) { return null; }
 }

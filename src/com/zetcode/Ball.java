@@ -1,7 +1,10 @@
 package com.zetcode;
 
+import java.awt.Graphics2D;
+
 // SINGLETON CLIENT
-public class Ball extends Sprite {
+// COMPOSITE: LEAF (slide 37: Developer)
+public class Ball extends Sprite implements GameObject {
 
     private int xdir;
     private int ydir;
@@ -70,4 +73,16 @@ public class Ball extends Sprite {
 
         return ydir;
     }
+
+    // COMPOSITE: LEAF methods (slide 37: Developer)
+    public void draw(Graphics2D g2d) {
+        g2d.drawImage(getImage(), getX(), getY(),
+                getImageWidth(), getImageHeight(), null);
+    }
+
+    public void add(GameObject gameObject) { }
+
+    public void remove(GameObject gameObject) { }
+
+    public GameObject getChild(int i) { return null; }
 }

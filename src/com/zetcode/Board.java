@@ -26,6 +26,9 @@ public class Board extends JPanel {
     private Brick[] bricks;
     private boolean inGame = true;
 
+    // COMPOSITE + DECORATOR: everything Board draws
+    private GameObject scene;
+
     
     private final LevelBuilder levelBuilder;
 
@@ -59,6 +62,20 @@ public class Board extends JPanel {
         ball = level.getBall();
         bricks = level.getBricks();
 
+        // COMPOSITE CLIENT (slide 40): build the tree
+        GameObject brickGroup = new GameObjectGroup();
+        for (int i = 0; i < bricks.length; i++) {
+            brickGroup.add(bricks[i]);
+        }
+
+        scene = new GameObjectGroup();
+        scene.add(ball);
+        scene.add(paddle);
+        scene.add(brickGroup);
+
+        // DECORATOR CLIENT (slide 52): wrap the tree
+        scene = new ControlsHintDecorator(scene);
+
         timer = new Timer(Commons.PERIOD, new GameCycle());
         timer.start();
     }
@@ -88,21 +105,8 @@ public class Board extends JPanel {
 
     private void drawObjects(Graphics2D g2d) {
 
-        g2d.drawImage(ball.getImage(), ball.getX(), ball.getY(),
-                ball.getImageWidth(), ball.getImageHeight(), this);
-        g2d.drawImage(paddle.getImage(), paddle.getX(), paddle.getY(),
-                paddle.getImageWidth(), paddle.getImageHeight(), this);
-
-        
-        for (int i = 0; i < bricks.length; i++) {
-
-            if (!bricks[i].isDestroyed()) {
-
-                g2d.drawImage(bricks[i].getImage(), bricks[i].getX(),
-                        bricks[i].getY(), bricks[i].getImageWidth(),
-                        bricks[i].getImageHeight(), this);
-            }
-        }
+        // COMPOSITE + DECORATOR CLIENT: one call draws the whole tree
+        scene.draw(g2d);
     }
 
     private void gameFinished(Graphics2D g2d) {
