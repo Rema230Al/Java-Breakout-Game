@@ -26,8 +26,16 @@ public class Board extends JPanel {
     private Brick[] bricks;
     private boolean inGame = true;
 
-    // COMPOSITE + DECORATOR: everything Board draws
+    private static final int MESSAGE_TICKS = 750;
+
+    // COMPOSITE: the tree
+    private GameObject world;
+
+    // DECORATOR: the tree, with or without a message
     private GameObject scene;
+
+    private int messageTicks;
+    private int bricksBroken;
 
     
     private final LevelBuilder levelBuilder;
@@ -68,13 +76,12 @@ public class Board extends JPanel {
             brickGroup.add(bricks[i]);
         }
 
-        scene = new GameObjectGroup();
-        scene.add(ball);
-        scene.add(paddle);
-        scene.add(brickGroup);
+        world = new GameObjectGroup();
+        world.add(ball);
+        world.add(paddle);
+        world.add(brickGroup);
 
-        // DECORATOR CLIENT (slide 52): wrap the tree
-        scene = new ControlsHintDecorator(scene);
+        showMessage("Use LEFT / RIGHT to move");
 
         timer = new Timer(Commons.PERIOD, new GameCycle());
         timer.start();
@@ -150,7 +157,29 @@ public class Board extends JPanel {
         ball.move();
         paddle.move();
         checkCollision();
+        hideMessageWhenTimeIsUp();
         repaint();
+    }
+
+    private void showMessage(String text) {
+
+        // DECORATOR CLIENT (slide 52): wrap the tree
+        scene = new MessageDecorator(world, text);
+        messageTicks = MESSAGE_TICKS;
+    }
+
+    private void hideMessageWhenTimeIsUp() {
+
+        if (messageTicks > 0) {
+
+            messageTicks--;
+
+            if (messageTicks == 0) {
+
+                // DECORATOR: responsibility withdrawn (slide 54)
+                scene = world;
+            }
+        }
     }
 
     private void stopGame() {
@@ -256,6 +285,17 @@ public class Board extends JPanel {
                     }
 
                     bricks[i].setDestroyed(true);
+                    bricksBroken++;
+
+                    if (bricksBroken == 5) {
+
+                        showMessage("Great job!");
+                    }
+
+                    if (bricksBroken == bricks.length / 2) {
+
+                        showMessage("Halfway there!");
+                    }
                 }
             }
         }
